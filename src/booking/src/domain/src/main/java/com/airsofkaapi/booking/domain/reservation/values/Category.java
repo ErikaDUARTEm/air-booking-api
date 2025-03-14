@@ -18,7 +18,6 @@ public class Category implements IValueObject {
   @Override
   public void validate() {
     ReservationValidator.validateNotNull(value, "Category");
-    ReservationValidator.validateNotBlank(value, "Category");
   }
 
   public String getValue() {

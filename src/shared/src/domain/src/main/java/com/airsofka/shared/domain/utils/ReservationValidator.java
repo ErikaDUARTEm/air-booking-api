@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Set;
-import java.util.Locale;
 
 public class ReservationValidator {
 
@@ -81,17 +80,6 @@ public class ReservationValidator {
     if (value == null || value < 0) {
       throw new IllegalArgumentException(fieldName + " must be a positive amount.");
     }
-
-    if (!hasTwoDecimalPlaces(value)) {
-      throw new IllegalArgumentException(fieldName + " must have at most two decimal places.");
-    }
-  }
-
-  private static boolean hasTwoDecimalPlaces(Double value) {
-    // Usar Locale.US para garantizar el punto como separador decimal
-    String textValue = String.format(Locale.US, "%.2f", value);
-    double roundedValue = Double.parseDouble(textValue);
-    return value.equals(roundedValue);
   }
 
   public static void validatePaymentMethod(String value, String fieldName) {

@@ -19,7 +19,7 @@ public class Seat implements IValueObject {
   public void validate() {
     ReservationValidator.validateNotNull(value, "Seat");
     ReservationValidator.validateNotBlank(value, "Seat");
-    ReservationValidator.validateAlphanumericCharacters(value, "Seat");
+
   }
 
   public String getValue() {

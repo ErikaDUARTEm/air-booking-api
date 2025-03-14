@@ -1,12 +1,7 @@
 package com.airsofka.authentication.domain.user;
 
 import com.airsofka.authentication.domain.user.entities.ReservationCounter;
-import com.airsofka.authentication.domain.user.events.AuthenticatedGoogleUser;
-import com.airsofka.authentication.domain.user.events.AuthenticatedUser;
-import com.airsofka.authentication.domain.user.events.LoggedOutUser;
-import com.airsofka.authentication.domain.user.events.UpdatedIsFrequentUser;
-import com.airsofka.authentication.domain.user.events.RegisteredGoogleUser;
-import com.airsofka.authentication.domain.user.events.RegisteredUser;
+import com.airsofka.authentication.domain.user.events.*;
 import com.airsofka.authentication.domain.user.values.Counter;
 import com.airsofka.authentication.domain.user.values.DocumentID;
 import com.airsofka.authentication.domain.user.values.Email;
@@ -35,6 +30,8 @@ public class UserHandler extends DomainActionsContainer {
     addAction(authenticateGoogleUser(user));
     addAction(loggedOutUser(user));
     addAction(updateIsFrequent(user));
+    addAction(modifyUser(user));
+    addAction(toggleUser(user));
   }
 
   public Consumer<? extends DomainEvent> registerUser(User user) {
@@ -42,7 +39,7 @@ public class UserHandler extends DomainActionsContainer {
       user.setName(Name.of(event.getName()));
       user.setEmail(Email.of(event.getEmail()));
       user.setPassword(Password.of(event.getPassword()));
-      user.setDocumentID(DocumentID.of(event.getEmail()));
+      user.setDocumentID(DocumentID.of(event.getDocumentId()));
       user.setNacionality(Nacionality.of(event.getNacionality()));
       user.setPhoneNumber(PhoneNumber.of(event.getPhoneNumber()));
       user.setMethodAuthentication(MethodAuthentication.of(MethodEnum.LOCAL.name()));
@@ -115,6 +112,21 @@ public class UserHandler extends DomainActionsContainer {
         user.setIsFrequent(IsFrequent.of(false));
       }
     };
+  }
+
+  public Consumer<? extends DomainEvent> modifyUser(User user) {
+    return (ModifiedUser event) -> {
+      user.setName(Name.of(event.getFullName()));
+      user.setEmail(Email.of(event.getEmail()));
+      user.setPassword(Password.of(event.getPassword()));
+      user.setDocumentID(DocumentID.of(event.getDocumentId()));
+      user.setNacionality(Nacionality.of(event.getNacionality()));
+      user.setPhoneNumber(PhoneNumber.of(event.getPhoneNumber()));
+    };
+  }
+
+  public Consumer<? extends DomainEvent> toggleUser(User user) {
+    return (ToggledUser event) -> user.toggleState();
   }
 
 }

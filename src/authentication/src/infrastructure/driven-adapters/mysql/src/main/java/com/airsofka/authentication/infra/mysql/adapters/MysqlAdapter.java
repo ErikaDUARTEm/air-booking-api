@@ -39,8 +39,8 @@ public class MysqlAdapter implements IUserRepositoryPort {
         userSql.setPhoneNumber(user.getPhoneNumber().getValue());
         userSql.setNacionality(user.getNacionality().getValue());
         userSql.setMethodAuthentication(user.getMethodAuthentication().getValue());
-        userSql.setRole(user.getState().getValue());
-        userSql.setState(user.getRole().getValue());
+        userSql.setRole(user.getRole().getValue());
+        userSql.setState(user.getState().getValue());
         userSql.setIsFrequent(user.getIsFrequent().getValue());
         userSql.setIsAuthenticated(user.getIsAuthenticated().getValue());
         repository.save(userSql);
@@ -55,8 +55,8 @@ public class MysqlAdapter implements IUserRepositoryPort {
         userSql.setId(user.getIdentity().getValue());
         userSql.setName(user.getName().getValue());
         userSql.setEmail(user.getEmail().getValue());
-        userSql.setRole(user.getState().getValue());
-        userSql.setRole(user.getState().getValue());
+        userSql.setRole(user.getRole().getValue());
+        userSql.setState(user.getState().getValue());
         userSql.setMethodAuthentication(user.getMethodAuthentication().getValue());
         userSql.setIsFrequent(user.getIsFrequent().getValue());
         userSql.setIsAuthenticated(user.getIsAuthenticated().getValue());
@@ -94,8 +94,8 @@ public class MysqlAdapter implements IUserRepositoryPort {
           user.getPhoneNumber()!= null? user.getPhoneNumber().getValue() : null,
           user.getNacionality()!= null? user.getNacionality().getValue() : null,
           user.getMethodAuthentication().getValue(),
-          user.getState().getValue(),
           user.getRole().getValue(),
+          user.getState().getValue(),
           user.getIsFrequent().getValue(),
           user.getIsAuthenticated().getValue()
         );
@@ -112,15 +112,41 @@ public class MysqlAdapter implements IUserRepositoryPort {
         userSql.setName(user.getName().getValue());
         userSql.setEmail(user.getEmail().getValue());
         userSql.setMethodAuthentication(user.getMethodAuthentication().getValue());
-        userSql.setState(user.getState().getValue());
         userSql.setRole(user.getRole().getValue());
+        userSql.setState(user.getState().getValue());
         userSql.setIsFrequent(user.getIsFrequent().getValue());
         userSql.setIsAuthenticated(user.getIsAuthenticated().getValue());
         repository.save(userSql);
     }
 
     @Override
-    public Boolean matches(String password, String encodedPassword) {
-        return passwordEncoder.matches(password, encodedPassword);
+    public void update(User user) {
+        if(user.getIdentity().getValue() == null){
+            throw new IllegalStateException("Identity cannot be null");
+        }
+        UserSql userSql = new UserSql(
+          user.getIdentity().getValue(),
+          user.getName().getValue(),
+          user.getPassword() != null? passwordEncoder.encode(user.getPassword().getValue()) : null,
+          user.getEmail().getValue(),
+          user.getDocumentID()!= null? user.getDocumentID().getValue() : null,
+          user.getPhoneNumber()!= null? user.getPhoneNumber().getValue() : null,
+          user.getNacionality()!= null? user.getNacionality().getValue() : null,
+          user.getMethodAuthentication().getValue(),
+          user.getRole().getValue(),
+          user.getState().getValue(),
+          user.getIsFrequent().getValue(),
+          user.getIsAuthenticated().getValue()
+        );
+        repository.save(userSql);
+    }
+
+    @Override
+    public void updateAdmin(UserResponse user) {
+        repository.findById(user.getId()).ifPresent(userSql -> {
+            userSql.setName(user.getName());
+            userSql.setIsAuthenticated(user.getAuthenticated());
+            repository.save(userSql);
+        });
     }
 }
